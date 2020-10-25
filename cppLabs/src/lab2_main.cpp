@@ -33,7 +33,7 @@ void test() {
   long long M = 1000, N = 1000, m = 5, n = 5, p = 4;
   int* kernel_numbers = new int[m * n];
   for(int i = 0; i < m * n; i++) {
-    kernel_numbers[i] = 1;
+    kernel_numbers[i] = i + 1;
   }
 
   int* img_numbers = new int[M * N];
