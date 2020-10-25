@@ -4,8 +4,6 @@
 #include <functional>
 #include "PrimitiveImg.h"
 
-#include <iostream>
-
 class ParallelPrimitiveImg : public PrimitiveImg {
 private:
   const int p;
@@ -216,7 +214,6 @@ private:
   }
 
 #pragma endregion
-
 
 public:
   ParallelPrimitiveImg(int rows, int columns, int p) : PrimitiveImg(rows, columns), p{ p } {}
