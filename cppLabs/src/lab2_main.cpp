@@ -140,10 +140,10 @@ int lab2_main(int argc, char* argv[]) {
   std::cout << "Sequential (ms)," << std::chrono::duration<double, std::milli>(dur1).count() << std::endl;
   std::cout << "Parallel (ms)," << std::chrono::duration<double, std::milli>(dur2).count() << std::endl;
   std::cout << "Specification, C++ 11 pointers" << std::endl;
-  std::cout << "N," << N << std::endl;
-  std::cout << "M," << M << std::endl;
-  std::cout << "n," << n << std::endl;
-  std::cout << "m," << m << std::endl;
+  std::cout << "MatrixColumns," << N << std::endl;
+  std::cout << "MatrixRows," << M << std::endl;
+  std::cout << "KernelColumns," << n << std::endl;
+  std::cout << "KernelRows," << m << std::endl;
 
   delete[] img_numbers;
   delete[] kernel_numbers;

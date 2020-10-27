@@ -28,9 +28,6 @@
     <Filter Include="Header Files\lab2\imgs">
       <UniqueIdentifier>{0430d17f-2ec0-46e0-96e3-c398f7a58063}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\lab2\imgs\overlays">
-      <UniqueIdentifier>{7f7684d4-df22-451a-a34b-ad0d9ae78fd4}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src.cpp">
