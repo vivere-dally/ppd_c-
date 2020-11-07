@@ -53,6 +53,16 @@ short do_sum(short* A, short* B, short* C, int start, int end) {
   return carry;
 }
 
+short apply_carry(short* C, int start, int end, short carry) {
+  for(int i = start; i < end; i++) {
+    C[i] += carry;
+    carry = C[i] / 10;
+    C[i] %= 10;
+  }
+
+  return carry;
+}
+
 int lab4_main_sequential(int argc, char* argv[]) {
   int A_LEN = atoi(argv[1]);
   int B_LEN = atoi(argv[2]);
@@ -253,6 +263,101 @@ int lab4_main_mpi_irecv(int argc, char* argv[]) {
   return MPI_Finalize();
 }
 
+int lab4_main_custom(int argc, char* argv[]) {
+  int A_LEN = atoi(argv[1]);
+  int B_LEN = atoi(argv[2]);
+
+  // MPI Prep
+  double t1, t2;
+  int world_size, world_rank, batch_size;
+  MPI_Status status;
+
+  MPI_Init(&argc, &argv);
+  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+  MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+
+  // Prep
+  int max_size = ((std::max(A_LEN, B_LEN) + world_size - 1) / world_size) * world_size;
+  short
+    * A = new short[max_size],
+    * B = new short[max_size],
+    * C = new short[max_size + 1];
+
+  batch_size = max_size / world_size;
+
+  // Work
+  if(world_rank == MASTER) {
+    std::string A_path = std::filesystem::path(argv[4]).append("A-" + std::string(argv[1]) + ".csv").string();
+    A = load_array(A_path, A_LEN, max_size);
+    std::string B_path = std::filesystem::path(argv[4]).append("B-" + std::string(argv[2]) + ".csv").string();
+    B = load_array(B_path, B_LEN, max_size);
+    t1 = MPI_Wtime();
+  }
+
+  short* A_p = new short[batch_size], * B_p = new short[batch_size], * C_p = new short[batch_size];
+  bool sent_to_master = false, first_received = false;
+  MPI_Scatter(A, batch_size, MPI_SHORT, A_p, batch_size, MPI_SHORT, MASTER, MPI_COMM_WORLD);
+  MPI_Scatter(B, batch_size, MPI_SHORT, B_p, batch_size, MPI_SHORT, MASTER, MPI_COMM_WORLD);
+  short carry = do_sum(A_p, B_p, C_p, 0, batch_size);
+  if(world_rank == world_size - 1) {
+    if(carry) {
+      MPI_Send(&carry, 1, MPI_SHORT, MASTER, MASTER, MPI_COMM_WORLD);
+      sent_to_master = true;
+    }
+  }
+  else {
+    MPI_Send(&carry, 1, MPI_SHORT, world_rank + 1, world_rank + 1, MPI_COMM_WORLD);
+  }
+
+  if(world_rank != MASTER) {
+    for(int _ = 0; _ < 2 && !first_received; _++) {
+      short recv_carry = 0;
+      MPI_Recv(&recv_carry, 1, MPI_SHORT, world_rank - 1, world_rank, MPI_COMM_WORLD, &status);
+      if(recv_carry != 0) {
+        carry = apply_carry(C_p, 0, batch_size, recv_carry);
+      }
+      else {
+        carry = 0;
+      }
+
+      if(world_rank == world_size - 1 && !sent_to_master) {
+        MPI_Send(&carry, 1, MPI_SHORT, MASTER, MASTER, MPI_COMM_WORLD);
+        sent_to_master = true;
+      }
+
+      if(world_rank < world_size - 1) {
+        MPI_Send(&carry, 1, MPI_SHORT, world_rank + 1, world_rank + 1, MPI_COMM_WORLD);
+      }
+
+      if(world_rank == 1) {
+        first_received = true;
+      }
+    }
+  }
+
+  MPI_Gather(C_p, batch_size, MPI_SHORT, C, batch_size, MPI_SHORT, MASTER, MPI_COMM_WORLD);
+  if(world_rank == MASTER) {
+    short recv_carry = 0;
+    MPI_Recv(&recv_carry, 1, MPI_SHORT, world_size - 1, world_rank, MPI_COMM_WORLD, &status);
+    C[max_size] = recv_carry;
+    t2 = MPI_Wtime();
+    std::string C_path = std::filesystem::path(argv[4]).append("custom_A-" + std::string(argv[1]) + "_B-" + std::string(argv[2]) + ".csv").string();
+    write_result(C_path, C, max_size + 1);
+    std::cout << "Implementation,Scatter&Gather" << std::endl;
+    std::cout << "P," << world_size << std::endl;
+    std::cout << "Time," << (t2 - t1) * 1000 << std::endl;
+  }
+
+  // Finish
+  delete[] A;
+  delete[] B;
+  delete[] C;
+  delete[] A_p;
+  delete[] B_p;
+  delete[] C_p;
+  return MPI_Finalize();
+}
+
 int lab4_main(int argc, char* argv[]) {
   if(argc < 5) {
     std::cerr
@@ -271,6 +376,8 @@ int lab4_main(int argc, char* argv[]) {
     return lab4_main_mpi_scatter_gather(argc, argv);
   case 3:
     return lab4_main_mpi_irecv(argc, argv);
+  case 4:
+    return lab4_main_custom(argc, argv);
   default:
     break;
   }
