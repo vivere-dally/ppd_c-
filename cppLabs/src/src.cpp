@@ -1,14 +1,17 @@
 // src.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-#include <iostream>
-#include "help.h"
-#include "vector_sum.h"
-#include "matrix_filter.h"
-#include "lab2_main.h"
+#include "sum_mpi.h"
 
 int main(int argc, char* argv[]) {
   //return lab1_main(argc, argv);
-  return lab2_main(argc, argv);
+  //return lab2_main(argc, argv);
+  //return sem3_main(argc, argv);
+  //return sem3_main_2(argc, argv);
+
+  // --- LAB 4 ---
+  //return lab4_main_secv(argc, argv);
+  //return lab4_main_mpi_scatter_gather(argc, argv);
+  return lab4_main(argc, argv);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

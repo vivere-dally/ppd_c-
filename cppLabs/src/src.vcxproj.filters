@@ -28,6 +28,12 @@
     <Filter Include="Header Files\lab2\imgs">
       <UniqueIdentifier>{0430d17f-2ec0-46e0-96e3-c398f7a58063}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\sem3">
+      <UniqueIdentifier>{a4f5b561-d535-4903-9518-16916c6eaba3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\lab4">
+      <UniqueIdentifier>{ad9408e2-f1c0-4c0b-b954-145e7aa03b91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src.cpp">
@@ -57,6 +63,12 @@
     <ClCompile Include="SequentialPrimitiveImg.cpp">
       <Filter>Header Files\lab2\imgs</Filter>
     </ClCompile>
+    <ClCompile Include="vector_sum_mpi.cpp">
+      <Filter>Header Files\sem3</Filter>
+    </ClCompile>
+    <ClCompile Include="sum_mpi.cpp">
+      <Filter>Header Files\lab4</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="help.h">
@@ -82,6 +94,12 @@
     </ClInclude>
     <ClInclude Include="SequentialPrimitiveImg.h">
       <Filter>Header Files\lab2\imgs</Filter>
+    </ClInclude>
+    <ClInclude Include="vector_sum_mpi.h">
+      <Filter>Header Files\sem3</Filter>
+    </ClInclude>
+    <ClInclude Include="sum_mpi.h">
+      <Filter>Header Files\lab4</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

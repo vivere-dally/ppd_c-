@@ -132,3 +132,12 @@ std::vector<std::pair<std::chrono::system_clock::duration, int>> trigger_program
   return duration_and_status;
 }
 
+std::string create_file_if_not_exists(std::filesystem::path path, std::string file_name, int size, int lower_bound, int upper_bound) {
+  auto _path = std::filesystem::path(path);
+  _path.append(file_name);
+  if(!std::filesystem::exists(_path)) {
+    rand_gen_file(_path.string(), size, lower_bound, upper_bound);
+  }
+
+  return _path.string();
+}
